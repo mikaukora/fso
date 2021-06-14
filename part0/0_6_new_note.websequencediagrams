@@ -1,0 +1,14 @@
+note over browser
+Form is submitted but default action is prevented. 
+Instead, a new note element is created together with time stamp 
+by browser and rendered on screen. It is then sent to server.
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+note over server
+Server updates its internal data with the newly provided note
+end note
+
+server-->browser: Status Code: 201
+
