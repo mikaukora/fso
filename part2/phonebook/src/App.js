@@ -48,6 +48,17 @@ const App = () => {
     setNameFilter(event.target.value);
   };
 
+  const handlePersonDelete = (id) => {
+    const person = persons.find((e) => e.id === id);
+    if (window.confirm(`Delete ${person.name}?`)) {
+      console.log(`deleting ID ${person.id} - ${person.name}`);
+      personService
+        .deleteId(person.id)
+        .then(setPersons(persons.filter((e) => e.id !== person.id)))
+        .catch((error) => console.log(error));
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -61,7 +72,10 @@ const App = () => {
         numberChange={handleNumberChange}
       ></PersonForm>
       <h3>Numbers</h3>
-      <Persons persons={personsToShow}></Persons>
+      <Persons
+        persons={personsToShow}
+        handleDelete={handlePersonDelete}
+      ></Persons>
     </div>
   );
 };

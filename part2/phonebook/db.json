@@ -16,34 +16,9 @@
       "id": 3
     },
     {
-      "name": "Mary Poppendieck",
-      "number": "39-23-6423122",
-      "id": 4
-    },
-    {
-      "name": "Pönni Puttinen",
-      "number": "123-123-123",
-      "id": 5
-    },
-    {
       "name": "Koira Koiruli",
       "number": "123123123333",
       "id": 6
-    },
-    {
-      "name": "Kissa Kii",
-      "number": "333",
-      "id": 7
-    },
-    {
-      "name": "Poenni Puttinen",
-      "number": "100-100",
-      "id": 8
-    },
-    {
-      "name": "Kukkeli Kuu",
-      "number": "000",
-      "id": 9
     }
   ]
 }
