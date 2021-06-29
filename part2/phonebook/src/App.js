@@ -3,12 +3,14 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import personService from "./services/persons";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [nameFilter, setNameFilter] = useState("");
+  const [notification, setNotification] = useState({});
 
   const personsToShow = persons.filter((p) =>
     p.name.toLocaleLowerCase().includes(nameFilter)
@@ -30,11 +32,23 @@ const App = () => {
         const personToUpdate = persons.find((e) => e.name === newName);
         const updated = { ...personToUpdate, number: newNumber };
 
-        personService.update(updated.id, updated).then(() => {
-          setPersons(persons.map((e) => (e.id === updated.id ? updated : e)));
-          setNewName("");
-          setNewNumber("");
-        });
+        personService
+          .update(updated.id, updated)
+          .then(() => {
+            setPersons(persons.map((e) => (e.id === updated.id ? updated : e)));
+            setNewName("");
+            setNewNumber("");
+            showNotification(`${personToUpdate.name} updated`);
+          })
+          .catch((error) => {
+            setNewName("");
+            setNewNumber("");
+            setPersons(persons.filter((e) => e.id !== personToUpdate.id));
+            showNotification(
+              `Information of ${personToUpdate.name} has already been removed from server`,
+              true
+            );
+          });
       }
     } else if (persons.find((e) => e.number === newNumber)) {
       alert(`${newNumber} is already added to phonebook`);
@@ -45,6 +59,7 @@ const App = () => {
         setPersons(persons.concat(response));
         setNewName("");
         setNewNumber("");
+        showNotification(`${person.name} added`);
       });
     }
   };
@@ -64,7 +79,7 @@ const App = () => {
   const handlePersonDelete = (id) => {
     const person = persons.find((e) => e.id === id);
     if (window.confirm(`Delete ${person.name}?`)) {
-      console.log(`deleting ID ${person.id} - ${person.name}`);
+      showNotification(`${person.name} deleted`);
       personService
         .deleteId(person.id)
         .then(setPersons(persons.filter((e) => e.id !== person.id)))
@@ -72,9 +87,17 @@ const App = () => {
     }
   };
 
+  const showNotification = (msg, error = false) => {
+    setNotification({ message: msg, error: error });
+    setTimeout(() => {
+      setNotification({});
+    }, 5000);
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} />
       <Filter value={nameFilter} onChange={handleFilterChange}></Filter>
       <h3>add a new</h3>
       <PersonForm
