@@ -22,7 +22,20 @@ const App = () => {
     event.preventDefault();
 
     if (persons.find((e) => e.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const personToUpdate = persons.find((e) => e.name === newName);
+        const updated = { ...personToUpdate, number: newNumber };
+
+        personService.update(updated.id, updated).then(() => {
+          setPersons(persons.map((e) => (e.id === updated.id ? updated : e)));
+          setNewName("");
+          setNewNumber("");
+        });
+      }
     } else if (persons.find((e) => e.number === newNumber)) {
       alert(`${newNumber} is already added to phonebook`);
     } else {
