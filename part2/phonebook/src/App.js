@@ -41,13 +41,8 @@ const App = () => {
             showNotification(`${personToUpdate.name} updated`);
           })
           .catch((error) => {
-            setNewName("");
-            setNewNumber("");
-            setPersons(persons.filter((e) => e.id !== personToUpdate.id));
-            showNotification(
-              `Information of ${personToUpdate.name} has already been removed from server`,
-              true
-            );
+            console.log(error.response.data);
+            showNotification(error.response.data.error, true);
           });
       }
     } else if (persons.find((e) => e.number === newNumber)) {
@@ -55,12 +50,18 @@ const App = () => {
     } else {
       const person = { name: newName, number: newNumber };
 
-      personService.create(person).then((response) => {
-        setPersons(persons.concat(response));
-        setNewName("");
-        setNewNumber("");
-        showNotification(`${person.name} added`);
-      });
+      personService
+        .create(person)
+        .then((response) => {
+          setPersons(persons.concat(response));
+          setNewName("");
+          setNewNumber("");
+          showNotification(`${person.name} added`);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          showNotification(error.response.data.error, true);
+        });
     }
   };
 
