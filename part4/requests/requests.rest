@@ -1,6 +1,9 @@
 GET http://localhost:3001/api/blogs/
 
 ###
+GET http://localhost:3001/api/wrong/
+
+###
 POST http://localhost:3001/api/blogs/ HTTP/1.1
 content-type: application/json
 
@@ -16,7 +19,7 @@ POST http://localhost:3001/api/blogs/ HTTP/1.1
 content-type: application/json
 
 {
-  "title": "another test",
+  "title": "another test more 2",
   "author": "mk",
   "url": "bar",
   "likes": 0
