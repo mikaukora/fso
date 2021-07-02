@@ -10,7 +10,35 @@ const totalLikes = (blogs) => {
   return 0;
 }
 
+const favoriteBlog = (blogs) => {
+  if (blogs && blogs.length) {
+    const favorite = blogs.reduce((acc, blog) => blog.likes > acc.likes ? blog : acc);
+    return { title: favorite.title, author: favorite.author, likes: favorite.likes };
+  }
+  return {};
+}
+
+const mostBlogs = (blogs) => {
+  if (blogs && blogs.length) {
+
+    const byAuthor = blogs.reduce((acc, blog) => {
+      if (blog.author in acc) {
+        acc[blog.author].blogs += 1;
+      }else {
+        acc[blog.author] = { author: blog.author, blogs: 1 };
+      }
+      return acc;
+    },{});
+
+    const mostPopular = Object.values(byAuthor).reduce((acc, blog) => blog.blogs > acc.blogs ? blog : acc);
+    return mostPopular;
+  }
+  return {};
+}
+
 module.exports = {
   dummy,
-  totalLikes
+  totalLikes,
+  favoriteBlog,
+  mostBlogs
 }
