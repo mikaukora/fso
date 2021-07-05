@@ -34,3 +34,6 @@ content-type: application/json
   "author": "mk",
   "likes": 123332
 }
+
+###
+DELETE http://localhost:3001/api/blogs/60e2cb8c215793199820fd94

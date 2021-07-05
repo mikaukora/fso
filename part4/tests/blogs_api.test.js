@@ -148,6 +148,58 @@ describe('likes', () => {
   })
 });
 
+describe('delete blogs', () => {
+  const initialBlogs = [
+    {
+      title: 'Type wars',
+      author: 'Robert C. Martin',
+      url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+      likes: 2,
+    },
+    {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+    },
+  ]
+
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+    let noteObject = new Blog(initialBlogs[0]);
+    await noteObject.save();
+    noteObject = new Blog(initialBlogs[1]);
+    await noteObject.save();
+  });
+
+  test('blogs can be deleted', async () => {
+    let response = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body).toHaveLength(2);
+    const blogsIds = response.body.map((b) => b.id);
+    const idToDelete = blogsIds[0];
+
+    response = await api
+      .delete(`/api/blogs/${idToDelete}`)
+      .expect(204);
+
+    response = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body).toHaveLength(1);
+    const remainingBlogsIds = response.body.map((b) => b.id);
+    expect(remainingBlogsIds).toEqual(
+      [blogsIds[1]]
+    );
+  });
+
+});
+
 afterAll(() => {
   mongoose.connection.close();
 })
