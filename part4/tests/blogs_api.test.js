@@ -200,6 +200,61 @@ describe('delete blogs', () => {
 
 });
 
+describe('update blogs', () => {
+  const initialBlogs = [
+    {
+      title: 'Type wars',
+      author: 'Robert C. Martin',
+      url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+      likes: 2,
+    },
+    {
+      title: 'Canonical string reduction',
+      author: 'Edsger W. Dijkstra',
+      url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+      likes: 12,
+    },
+  ]
+
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+    let noteObject = new Blog(initialBlogs[0]);
+    await noteObject.save();
+    noteObject = new Blog(initialBlogs[1]);
+    await noteObject.save();
+  });
+
+  test('likes can be updated', async () => {
+    let response = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body[0].likes).toEqual(2)
+    const blogsIds = response.body.map((b) => b.id);
+    const idToUpdate = blogsIds[0];
+
+    response = await api
+      .put(`/api/blogs/${idToUpdate}`)
+      .send({ likes: 1000 })
+      .expect(201);
+
+    response = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const updatedLikes = response.body.map((b) => b.likes);
+    expect(updatedLikes).toEqual(
+      [1000, initialBlogs[1].likes]
+    );
+
+    expect(response.body[0].likes).toEqual(1000);
+  });
+
+});
+
+
 afterAll(() => {
   mongoose.connection.close();
 })
