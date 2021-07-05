@@ -92,6 +92,32 @@ describe('post blogs', () => {
   })
 });
 
+describe('likes', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+  })
+
+  const blog = {
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+  }
+
+  test('like gets default value', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const response = await api.get('/api/blogs');
+    const likes = response.body[0].likes;
+
+    expect(response.body).toHaveLength(1);
+    expect(likes).toEqual(0);
+  })
+});
+
 afterAll(() => {
   mongoose.connection.close();
 })
