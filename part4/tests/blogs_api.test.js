@@ -73,7 +73,19 @@ describe('post blogs', () => {
     author: 'Robert C. Martin',
     url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
     likes: 2,
-  }
+  };
+
+  const blogWithoutTitle = {
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 2,
+  };
+
+  const blogWithoutUrl = {
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    likes: 2,
+  };
 
   test('blogs can be added', async () => {
     await api
@@ -89,7 +101,25 @@ describe('post blogs', () => {
     expect(titles).toEqual(
       ['Type wars']
     );
-  })
+  });
+
+  test('blog without title can not be added', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blogWithoutTitle)
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+  });
+
+  test('blog without url can not be added', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blogWithoutUrl)
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+  });
 });
 
 describe('likes', () => {

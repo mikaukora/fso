@@ -24,3 +24,13 @@ content-type: application/json
   "url": "bar",
   "likes": 0
 }
+
+###
+POST http://localhost:3001/api/blogs/ HTTP/1.1
+content-type: application/json
+
+{
+  "title": "test",
+  "author": "mk",
+  "likes": 123332
+}
