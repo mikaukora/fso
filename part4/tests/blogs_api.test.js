@@ -54,8 +54,44 @@ describe('get blogs', () => {
     expect(firstBlog._id).not.toBeDefined();
   })
 
-  afterAll(() => {
-    mongoose.connection.close();
-  })
+  const blog = {
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 2,
+  }
 
 });
+
+describe('post blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+  })
+
+  const blog = {
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
+    likes: 2,
+  }
+
+  test('blogs can be added', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const response = await api.get('/api/blogs');
+    const titles = response.body.map(r => r.title);
+
+    expect(response.body).toHaveLength(1);
+    expect(titles).toEqual(
+      ['Type wars']
+    );
+  })
+});
+
+afterAll(() => {
+  mongoose.connection.close();
+})
