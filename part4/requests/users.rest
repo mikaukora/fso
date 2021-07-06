@@ -10,3 +10,22 @@ content-type: application/json
   "username": "mikaukora",
   "password": "test"
 }
+
+###
+POST http://localhost:3001/api/users/ HTTP/1.1
+content-type: application/json
+
+{
+  "name": "toka",
+  "username": "tokaukora",
+  "password": "testagain"
+}
+
+###
+POST http://localhost:3001/api/users/ HTTP/1.1
+content-type: application/json
+
+{
+  "name": "toka",
+  "password": "testagain"
+}
