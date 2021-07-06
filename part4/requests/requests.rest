@@ -1,11 +1,30 @@
 GET http://localhost:3001/api/blogs/
 
+
+###
+GET http://localhost:3001/api/users/
+
+
 ###
 GET http://localhost:3001/api/wrong/
 
 ###
 POST http://localhost:3001/api/blogs/ HTTP/1.1
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2F1a29yYSIsImlkIjoiNjBlM2VlYmYwN2YyNzQzMjU3YWM5MGYxIiwiaWF0IjoxNjI1NTY1OTczfQ.2qpe8USWciwA9rZXvg6CFYwW-jcqRf0m26rusmU5FNQ
+
+{
+  "title": "test with good token",
+  "author": "mk",
+  "url": "foo",
+  "likes": 123332
+}
+
+
+### invalid token
+POST http://localhost:3001/api/blogs/ HTTP/1.1
+content-type: application/json
+Authorization: Bearer IIeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pa2F1a29yYSIsImlkIjoiNjBlM2VlYmYwN2YyNzQzMjU3YWM5MGYxIiwiaWF0IjoxNjI1NTY1OTczfQ.2qpe8USWciwA9rZXvg6CFYwW-jcqRf0m26rusmU5FNQ
 
 {
   "title": "test",
