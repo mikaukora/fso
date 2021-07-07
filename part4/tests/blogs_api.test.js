@@ -2,8 +2,10 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 
-const api = supertest(app)
+const api = supertest(app);
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const helper = require('./test_helper');
 
 describe('get blogs', () => {
   const initialBlogs = [
@@ -54,18 +56,29 @@ describe('get blogs', () => {
     expect(firstBlog._id).not.toBeDefined();
   })
 
-  const blog = {
-    title: 'Type wars',
-    author: 'Robert C. Martin',
-    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
-    likes: 2,
-  }
-
 });
 
 describe('post blogs', () => {
+  let initialUsers = [
+    {
+      name: 'Kissa',
+      username: 'kissa',
+      password: 'kissa',
+      token: null,
+    },
+    {
+      name: 'Koira',
+      username: 'koira',
+      password: 'koira',
+      token: null,
+    },
+  ]
+
   beforeEach(async () => {
     await Blog.deleteMany({});
+    await User.deleteMany({});
+    initialUsers[0] = await helper.addUser(initialUsers[0]);
+    initialUsers[1] = await helper.addUser(initialUsers[1]);
   })
 
   const blog = {
@@ -91,6 +104,7 @@ describe('post blogs', () => {
     await api
       .post('/api/blogs')
       .send(blog)
+      .set('Authorization', `Bearer ${initialUsers[0].token}` )
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
@@ -107,24 +121,43 @@ describe('post blogs', () => {
     await api
       .post('/api/blogs')
       .send(blogWithoutTitle)
+      .set('Authorization', `Bearer ${initialUsers[0].token}` )
       .expect(400)
       .expect('Content-Type', /application\/json/);
-
   });
 
   test('blog without url can not be added', async () => {
     await api
       .post('/api/blogs')
       .send(blogWithoutUrl)
+      .set('Authorization', `Bearer ${initialUsers[0].token}` )
       .expect(400)
+      .expect('Content-Type', /application\/json/);
+  });
+
+  test('blog can not be added without token', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blog)
+      .expect(401)
       .expect('Content-Type', /application\/json/);
 
   });
 });
 
 describe('likes', () => {
+  let user = {
+    name: 'Kissa',
+    username: 'kissa',
+    password: 'kissa',
+    token: null,
+  }
+
   beforeEach(async () => {
     await Blog.deleteMany({});
+    await User.deleteMany({});
+
+    user = await helper.addUser(user);
   })
 
   const blog = {
@@ -137,6 +170,7 @@ describe('likes', () => {
     await api
       .post('/api/blogs')
       .send(blog)
+      .set('Authorization', `Bearer ${user.token}` )
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
@@ -149,28 +183,52 @@ describe('likes', () => {
 });
 
 describe('delete blogs', () => {
-  const initialBlogs = [
+  let user = {
+    name: 'Kissa',
+    username: 'kissa',
+    password: 'kissa',
+    token: null,
+  }
+
+  let blog = [
     {
       title: 'Type wars',
       author: 'Robert C. Martin',
       url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
       likes: 2,
+      user: null
     },
     {
       title: 'Canonical string reduction',
       author: 'Edsger W. Dijkstra',
       url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
       likes: 12,
+      user: null
     },
   ]
 
   beforeEach(async () => {
     await Blog.deleteMany({});
-    let noteObject = new Blog(initialBlogs[0]);
-    await noteObject.save();
-    noteObject = new Blog(initialBlogs[1]);
-    await noteObject.save();
-  });
+    await User.deleteMany({});
+
+    user = await helper.addUser(user);
+
+    await api
+      .post('/api/blogs')
+      .send(blog[0])
+      .set('Authorization', `Bearer ${user.token}` )
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    await api
+      .post('/api/blogs')
+      .send(blog[1])
+      .set('Authorization', `Bearer ${user.token}` )
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+  })
+
 
   test('blogs can be deleted', async () => {
     let response = await api
@@ -184,6 +242,7 @@ describe('delete blogs', () => {
 
     response = await api
       .delete(`/api/blogs/${idToDelete}`)
+      .set('Authorization', `Bearer ${user.token}` )
       .expect(204);
 
     response = await api

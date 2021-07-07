@@ -11,6 +11,10 @@ blogsRouter.post('/', async (request, response) => {
   const body = request.body;
   const user = await User.findById(request.user);
 
+  if (!user) {
+    response.status(401).json({ error: 'Invalid user or token missing' });
+  }
+
   const blog = new Blog({
     title: body.title,
     url: body.url,
