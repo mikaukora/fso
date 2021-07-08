@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import PropTypes from 'prop-types';
 
 const Blog = ({blog, onLike, currentUser, onRemove}) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -48,6 +49,13 @@ const Blog = ({blog, onLike, currentUser, onRemove}) => {
     {showDetails ? details() : titles()}
     </div>
   )
+}
+
+Blog.propTypes = {
+  onLike: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
+  currentUser: PropTypes.string.isRequired,
+  blog: PropTypes.object.isRequired
 }
 
 export default Blog

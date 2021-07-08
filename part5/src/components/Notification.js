@@ -1,3 +1,5 @@
+import PropTypes from 'prop-types';
+
 const Notification = ({ message }) => {
     if (Object.keys(message).length === 0 || message.message === "") {
       return null;
@@ -7,6 +9,9 @@ const Notification = ({ message }) => {
       <div className={message.error ? "error" : "info"}>{message.message}</div>
     );
   };
-  
-  export default Notification;
-  
+
+Notification.propTypes = {
+  message: PropTypes.object.isRequired
+}
+
+export default Notification;
