@@ -117,6 +117,14 @@ const App = () => {
     showNotification(`blog ${blog.title} by ${blog.author} updated, now ${blog.likes} likes `);
   }
 
+  const handleBlogRemove = async (blog) => {
+    console.log("removing blog", blog);
+    await blogService.remove(blog);
+    const updatedBlogs = await blogService.getAll();
+    sortAndUpdateBlogs(updatedBlogs);
+    showNotification(`blog ${blog.title} by ${blog.author} removed`);
+  }
+
   const blogList = () => (
     <div>
       <h2>blogs</h2>
@@ -128,7 +136,7 @@ const App = () => {
       </Togglable>
       <div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} onLike={handleLikeUpdate} />
+        <Blog key={blog.id} blog={blog} onLike={handleLikeUpdate} currentUser={user.username} onRemove={handleBlogRemove}/>
       )}
       </div>
     </div>
