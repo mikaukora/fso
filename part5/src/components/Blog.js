@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-const Blog = ({blog, onLike, currentUser, onRemove}) => {
+const Blog = ({ blog, onLike, currentUser, onRemove }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const blogStyle = {
@@ -10,12 +10,12 @@ const Blog = ({blog, onLike, currentUser, onRemove}) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
-  }
+  };
 
   const toggleDetails = () => setShowDetails(!showDetails);
 
   const handleLike = (blog) => {
-    const updatedBlog = {...blog, likes: blog.likes + 1}
+    const updatedBlog = { ...blog, likes: blog.likes + 1 };
     onLike(updatedBlog);
   };
 
@@ -23,14 +23,14 @@ const Blog = ({blog, onLike, currentUser, onRemove}) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       onRemove(blog);
     }
-  }
+  };
 
   const deleteButton = (blog) => {
     if (blog.user.username === currentUser) {
-      return <button onClick={() => handleRemove(blog)} >Remove</button>
+      return <button onClick={() => handleRemove(blog)} >Remove</button>;
     }
     return null;
-  }
+  };
 
   const titles = () => ( <div style={blogStyle}> {blog.title} {blog.author}  <button onClick={toggleDetails}>view</button></div> );
 
@@ -41,21 +41,21 @@ const Blog = ({blog, onLike, currentUser, onRemove}) => {
       <p> likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button></p>
       <p> {blog?.user?.name}</p>
       {deleteButton(blog)}
-      </div>
-    );
+    </div>
+  );
 
   return (
     <div>
-    {showDetails ? details() : titles()}
+      {showDetails ? details() : titles()}
     </div>
-  )
-}
+  );
+};
 
 Blog.propTypes = {
   onLike: PropTypes.func.isRequired,
   onRemove: PropTypes.func.isRequired,
   currentUser: PropTypes.string.isRequired,
   blog: PropTypes.object.isRequired
-}
+};
 
-export default Blog
+export default Blog;
