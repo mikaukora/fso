@@ -1,6 +1,19 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-const CreateForm = ({handleCreateNew, handleTitleChange, handleAuthorChange, handleUrlChange, title, author, url}) => (
+const CreateForm = ({ createBlog }) => {
+    const [title, setTitle] = useState('');
+    const [author, setAuthor] = useState('');
+    const [url, setUrl] = useState('');
+
+    const handleCreateNew = async (event) => {
+        event.preventDefault();
+        createBlog({title, author, url});
+        setTitle('');
+        setAuthor('');
+        setUrl('');
+      }
+
+    return (
     <div>
       <h3>create new</h3>
       <form onSubmit={handleCreateNew}>
@@ -10,7 +23,7 @@ const CreateForm = ({handleCreateNew, handleTitleChange, handleAuthorChange, han
             type="text"
             value={title}
             name="Title"
-            onChange={handleTitleChange}
+            onChange={({ target }) => setTitle(target.value)}
           />
         </div>
         <div>
@@ -19,7 +32,7 @@ const CreateForm = ({handleCreateNew, handleTitleChange, handleAuthorChange, han
             type="text"
             value={author}
             name="Author"
-            onChange={handleAuthorChange}
+            onChange={({ target }) => setAuthor(target.value)}
           />
         </div>
         <div>
@@ -28,12 +41,13 @@ const CreateForm = ({handleCreateNew, handleTitleChange, handleAuthorChange, han
             type="text"
             value={url}
             name="Url"
-            onChange={handleUrlChange}
+            onChange={({ target }) => setUrl(target.value)}
           />
         </div>
         <button type="submit">create</button>
       </form>
     </div>
-)
+    );
+}
 
 export default CreateForm;

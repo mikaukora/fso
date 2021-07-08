@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Blog from './components/Blog';
 import CreateForm from './components/CreateForm';
 import Notification from './components/Notification';
+import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
 
@@ -10,11 +11,7 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
   const [notification, setNotification] = useState({});
-  const [createVisible, setCreateVisible] = useState(false);
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -24,7 +21,6 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
-    console.log('effect', loggedUserJSON);
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
@@ -85,22 +81,13 @@ const App = () => {
     </div>
   )
 
-  const handleCreateNew = async (event) => {
-    event.preventDefault();
-
-    console.log('handleCreateNew called', title, author, url);
-    console.log('blogs', blogs);
+  const addBlog = async (blog) => {
     try {
-      await blogService.create({ title, author, url });
+      blogListRef.current.toggleVisibility();
+      await blogService.create(blog);
       const updatedBlogs = await blogService.getAll();
       setBlogs( updatedBlogs );
-      showNotification(`a new blog ${title} by ${author} added`);
-      setTitle('');
-      setAuthor('');
-      setUrl('');
-
-      // TODO: later use ref
-      setCreateVisible(false);
+      showNotification(`a new blog ${blog.title} by ${blog.author} added`);
     } catch (exception) {
       console.log('error when creating blog');
     }
@@ -113,28 +100,17 @@ const App = () => {
     }, 5000);
   };
 
-  const hideWhenVisible = { display: createVisible ? 'none' : '' }
-  const showWhenVisible = { display: createVisible ? '' : 'none' }
+  const blogListRef = useRef();
 
   const blogList = () => (
     <div>
       <h2>blogs</h2>
       <p>{user.name} logged in <button onClick={handleLogout}>Log out</button></p>
-      <div style={hideWhenVisible}>
-        <button onClick={() => setCreateVisible(true)}>create new blog</button>
-      </div>
-      <div style={showWhenVisible}>
+      <Togglable buttonLabel='create new blog' ref={blogListRef}>
         <CreateForm
-          handleCreateNew={handleCreateNew}
-          title={title}
-          author={author}
-          url={url}
-          handleTitleChange={({ target }) => setTitle(target.value)}
-          handleAuthorChange={({ target }) => setAuthor(target.value)}
-          handleUrlChange={({ target }) => setUrl(target.value)}
+          createBlog={addBlog}
           ></CreateForm>
-        <button onClick={() => setCreateVisible(false)}>cancel</button>
-      </div>
+      </Togglable>
       <div>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
