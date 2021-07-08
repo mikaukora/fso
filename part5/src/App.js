@@ -102,6 +102,14 @@ const App = () => {
 
   const blogListRef = useRef();
 
+  const handleLikeUpdate = async (blog) => {
+    console.log(blog);
+    await blogService.update(blog);
+    const updatedBlogs = await blogService.getAll();
+    setBlogs( updatedBlogs );
+    showNotification(`blog ${blog.title} by ${blog.author} updated, now ${blog.likes} likes `);
+}
+
   const blogList = () => (
     <div>
       <h2>blogs</h2>
@@ -113,7 +121,7 @@ const App = () => {
       </Togglable>
       <div>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} onLike={handleLikeUpdate} />
       )}
       </div>
     </div>
