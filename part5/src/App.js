@@ -13,11 +13,18 @@ const App = () => {
   const [user, setUser] = useState(null);
   const [notification, setNotification] = useState({});
 
+  const sortByLikes = (objs) => [...objs].sort((a,b) => (a.likes > b.likes) ? -1 : a.likes < b.likes ? 1 : 0);
+
+  const sortAndUpdateBlogs = (blogs) => {
+    const sorted = sortByLikes(blogs);
+    setBlogs(sorted);
+  }
+
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    );
-  }, [])
+    blogService.getAll().then(blogs => {
+      sortAndUpdateBlogs(blogs);
+    });
+  }, []);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
@@ -86,7 +93,7 @@ const App = () => {
       blogListRef.current.toggleVisibility();
       await blogService.create(blog);
       const updatedBlogs = await blogService.getAll();
-      setBlogs( updatedBlogs );
+      sortAndUpdateBlogs( updatedBlogs );
       showNotification(`a new blog ${blog.title} by ${blog.author} added`);
     } catch (exception) {
       console.log('error when creating blog');
@@ -106,9 +113,9 @@ const App = () => {
     console.log(blog);
     await blogService.update(blog);
     const updatedBlogs = await blogService.getAll();
-    setBlogs( updatedBlogs );
+    sortAndUpdateBlogs(updatedBlogs);
     showNotification(`blog ${blog.title} by ${blog.author} updated, now ${blog.likes} likes `);
-}
+  }
 
   const blogList = () => (
     <div>
