@@ -45,7 +45,7 @@ const Blog = ({ blog, onLike, currentUser, onRemove }) => {
   );
 
   return (
-    <div>
+    <div className='blog'>
       {showDetails ? details() : titles()}
     </div>
   );
