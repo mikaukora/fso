@@ -80,3 +80,32 @@ test('renders details', async () => {
   const blogElem = component.container.querySelector('.blog');
   console.log(prettyDOM(blogElem));
 });
+
+test('like callback is called', async () => {
+  const blog = {
+    title: 'test title',
+    author: 'some ',
+    likes: 100,
+    url: 'https//www.google.com',
+    user: { username: '123' },
+  };
+
+  const mockOnRemove = jest.fn();
+  const mockOnLike = jest.fn();
+  const user = '123';
+
+  const component = render(
+    <Blog blog={blog} onRemove={mockOnRemove} onLike={mockOnLike} currentUser={user}/>
+  );
+
+  const viewButton = component.getByText('view');
+  fireEvent.click(viewButton);
+
+  const likeButton = component.getByText('like');
+
+  fireEvent.click(likeButton);
+  expect(mockOnLike.mock.calls).toHaveLength(1);
+
+  fireEvent.click(likeButton);
+  expect(mockOnLike.mock.calls).toHaveLength(2);
+});
