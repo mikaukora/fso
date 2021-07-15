@@ -46,7 +46,7 @@ describe('Blog ', function() {
     cy.contains('Test User logged in');
   });
 
-  describe('When logged in', function() {
+  describe.only('When logged in', function() {
     beforeEach(function() {
       cy.contains('Login').click();
       cy.get('#username').type('tuser');
@@ -54,7 +54,7 @@ describe('Blog ', function() {
       cy.get('#login-button').click();
     });
 
-    it.only('A blog can be created', function() {
+    it('A blog can be created', function() {
       cy.contains('create new blog').click();
       cy.get('#title').type('a note created by cypress');
       cy.get('#author').type('Cypress');
@@ -64,6 +64,19 @@ describe('Blog ', function() {
       cy.contains('a note created by cypress');
     });
 
-  });
+    it('A blog can be liked', function() {
+      cy.contains('create new blog').click();
+      cy.get('#title').type('a note created by cypress');
+      cy.get('#author').type('Cypress');
+      cy.get('#url').type('https://foo.bar.com');
 
+      cy.get('#submit-button').click();
+      cy.contains('view').click();
+      cy.contains('likes: 0');
+
+      cy.contains('like').click();
+      cy.contains('likes: 1');
+
+    });
+  });
 });
