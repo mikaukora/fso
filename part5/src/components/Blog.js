@@ -38,7 +38,7 @@ const Blog = ({ blog, onLike, currentUser, onRemove }) => {
     <div style={blogStyle}>
       {blog.title} by {blog.author} <button onClick={toggleDetails}>hide</button>
       <p>{blog.url}</p>
-      <p> likes: {blog.likes} <button onClick={() => handleLike(blog)}>like</button></p>
+      <p> likes: {blog.likes} <button id='like-button' onClick={() => handleLike(blog)}>like</button></p>
       <p> {blog?.user?.name}</p>
       {deleteButton(blog)}
     </div>

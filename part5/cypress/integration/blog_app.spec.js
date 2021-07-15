@@ -121,4 +121,97 @@ describe('When logged in', function() {
     cy.get('html').should('not.contain', 'Remove');
   });
 
+  it('sorts blogs correctly', function() {
+    cy.contains('create new blog').click();
+    cy.get('#title').type('test note 1');
+    cy.get('#author').type('Cypress');
+    cy.get('#url').type('https://foo.bar.com');
+
+    cy.get('#submit-button').click();
+    cy.contains('test note 1');
+
+    cy.contains('create new blog').click();
+    cy.get('#title').type('test note 2');
+    cy.get('#author').type('Cypress');
+    cy.get('#url').type('https://foo.bar.com');
+
+    cy.get('#submit-button').click();
+    cy.contains('test note 1');
+    cy.contains('test note 2');
+  });
+
+});
+
+
+describe('When logged in', function() {
+  before(function() {
+    cy.request('POST', 'http://localhost:3003/api/testing/reset');
+
+    const user = {
+      name: 'Test User',
+      username: 'tuser',
+      password: 'salainen'
+    };
+
+    cy.request('POST', 'http://localhost:3003/api/users/', user);
+
+    cy.visit('http://localhost:3000');
+    cy.contains('Login').click();
+    cy.get('#username').type('tuser');
+    cy.get('#password').type('salainen');
+    cy.get('#login-button').click();
+
+  });
+
+  it('sorts blogs correctly', function() {
+    cy.contains('create new blog').click();
+    cy.get('#title').type('test note 1');
+    cy.get('#author').type('Cypress');
+    cy.get('#url').type('https://foo.bar.com');
+
+    cy.get('#submit-button').click();
+    cy.contains('test note 1');
+
+    cy.contains('create new blog').click();
+    cy.get('#title').type('test note 2');
+    cy.get('#author').type('Cypress');
+    cy.get('#url').type('https://foo.bar.com');
+
+    cy.get('#submit-button').click();
+    cy.contains('test note 1');
+    cy.contains('test note 2');
+
+    cy.contains('create new blog').click();
+    cy.get('#title').type('test note 3');
+    cy.get('#author').type('Cypress');
+    cy.get('#url').type('https://foo.bar.com');
+
+    cy.get('#submit-button').click();
+    cy.contains('test note 1');
+    cy.contains('test note 2');
+    cy.contains('test note 3');
+
+    cy.get('.blog').should('have.length', 3);
+
+    cy.get('.blog').first().contains('test note 1');
+
+    // Swap order by liking
+    cy.get('.blog').contains('test note 3').contains('view').click();
+    cy.contains('likes: 0');
+    cy.get('#like-button').click();
+    cy.contains('likes: 1');
+    cy.get('.blog').first().contains('test note 3');
+    cy.get('.blog').contains('test note 3').contains('hide').click();
+
+    // more swapping
+    cy.get('.blog').contains('test note 2').contains('view').click();
+    cy.contains('likes: 0');
+    cy.get('#like-button').click();
+    cy.contains('likes: 1');
+    cy.get('#like-button').click();
+    cy.contains('likes: 2');
+    cy.get('.blog').first().contains('test note 2');
+    cy.get('.blog').contains('test note 2').contains('hide').click();
+
+  });
 });
