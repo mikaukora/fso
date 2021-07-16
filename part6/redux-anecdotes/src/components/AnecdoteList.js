@@ -2,6 +2,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addVote } from '../reducers/anecdoteReducer';
+import { showNotification } from '../reducers/notificationReducer';
 
 
 const AnecdoteList = () => {
@@ -11,6 +12,7 @@ const AnecdoteList = () => {
   const vote = (id) => {
     const vote = dispatch(addVote(id));
     console.log('vote', vote);
+    showNotification(dispatch, 'Anecdote voted');
   }
 
   const sortByVotes = (objs) => [...objs].sort((a,b) => (a.votes > b.votes) ? -1 : a.votes < b.votes ? 1 : 0);

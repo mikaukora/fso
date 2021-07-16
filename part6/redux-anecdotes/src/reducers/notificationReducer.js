@@ -1,21 +1,44 @@
-const notificationAtStart = 'This is a test notification';
+const notificationAtStart = [];
     
 const initialState = notificationAtStart;
   
-export const addNotification = (text) => {
+const addNotification = (text, id) => {
   return {
     type: 'NEW_NOTE',
-    note: text
+    data: {
+      text,
+      id
+    }
   }
 }
-  
+
+const clearNotification = (id) => {
+    return {
+      type: 'CLEAR_NOTE',
+      data: {
+        id,
+      }
+    }
+  }
+
+let runningId = 0;
+
+export const showNotification = (dispatch, text) => {
+    const nextId = runningId++;
+    dispatch(addNotification(text, nextId));
+    setTimeout(() => dispatch(clearNotification(nextId)), 5000);
+}
+
 const reducer = (state = initialState, action) => {
   console.log('notification state now: ', state);
   console.log('notification action', action);
 
   switch (action.type) {
     case 'NEW_NOTE':
-      return action.note;
+      // Newest on top, it is shown
+      return [action.data, ...state];
+    case 'CLEAR_NOTE':
+      return state.filter((e)=>e.id !== action.data.id);
     default:
       return state;
   }
