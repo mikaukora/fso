@@ -7,6 +7,7 @@ import { showNotification } from '../reducers/notificationReducer';
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(state => state.anecdotes);
+  const viewFilter = useSelector(state => state.filter);
   const dispatch = useDispatch();
 
   const vote = (id) => {
@@ -17,9 +18,21 @@ const AnecdoteList = () => {
 
   const sortByVotes = (objs) => [...objs].sort((a,b) => (a.votes > b.votes) ? -1 : a.votes < b.votes ? 1 : 0);
 
+  const filteredAnecdotes = (objs, filter) => {
+      if (!filter) {
+        return objs;
+      }
+      return objs.filter((p) => p.content.toLocaleLowerCase().includes(filter));
+  };
+
+  const finalList = () => {
+    const filtered = filteredAnecdotes(anecdotes, viewFilter);
+    return sortByVotes(filtered);
+  }
+
   return (
     <div>
-        {sortByVotes(anecdotes).map(anecdote =>
+        {finalList().map(anecdote =>
             <div key={anecdote.id}>
             <div>
                 {anecdote.content}
