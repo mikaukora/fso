@@ -2,33 +2,29 @@ const notificationAtStart = '';
     
 const initialState = notificationAtStart;
   
-const addNotification = (text, id) => {
+const addNotification = (text, timeoutId) => {
   return {
     type: 'NEW_NOTE',
     data: {
       text,
-      id
+      timeoutId
     }
   }
 }
 
-const clearNotification = (id) => {
+const clearNotification = () => {
     return {
       type: 'CLEAR_NOTE',
-      data: {
-        id,
-      }
     }
   }
 
-let runningId = 0;
-
 export const showNotification = (text, timeout) => {
-    return async dispatch => {
-      const nextId = runningId++;
-      dispatch(addNotification(text, nextId));
-      const timeoutId = setTimeout(() => dispatch(clearNotification(nextId)), timeout * 1000);
-      console.log('timeoutId', timeoutId);
+    return async (dispatch, getState) => {
+      const {notification} = getState();
+      console.log('Cleaning timer ID ', notification.timeoutId);
+      clearTimeout(notification.timeoutId);
+      const timeoutId = setTimeout(() => dispatch(clearNotification()), timeout * 1000);
+      dispatch(addNotification(text, timeoutId));
     }
 }
 
