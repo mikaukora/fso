@@ -23,10 +23,12 @@ const clearNotification = (id) => {
 
 let runningId = 0;
 
-export const showNotification = (dispatch, text) => {
-    const nextId = runningId++;
-    dispatch(addNotification(text, nextId));
-    setTimeout(() => dispatch(clearNotification(nextId)), 5000);
+export const showNotification = (text, timeout) => {
+    return async dispatch => {
+      const nextId = runningId++;
+      dispatch(addNotification(text, nextId));
+      setTimeout(() => dispatch(clearNotification(nextId)), timeout * 1000);
+    }
 }
 
 const reducer = (state = initialState, action) => {

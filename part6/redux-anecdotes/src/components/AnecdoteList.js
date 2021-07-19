@@ -10,10 +10,10 @@ const AnecdoteList = () => {
   const viewFilter = useSelector(state => state.filter);
   const dispatch = useDispatch();
 
-  const vote = (id) => {
+  const vote = async (id) => {
     const vote = dispatch(addVote(id));
     console.log('vote', vote);
-    showNotification(dispatch, 'Anecdote voted');
+    dispatch(showNotification('Anecdote voted', 2));
   }
 
   const sortByVotes = (objs) => [...objs].sort((a,b) => (a.votes > b.votes) ? -1 : a.votes < b.votes ? 1 : 0);

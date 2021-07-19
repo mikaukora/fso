@@ -14,8 +14,7 @@ const createNew = async (content) => {
 }
 
 const updateVote = async (id, content) => {
-  const object = { content };
-  const response = await axios.put(`${baseUrl}/${id}`, object);
+  const response = await axios.put(`${baseUrl}/${id}`, content);
   return response.data;
 }
 

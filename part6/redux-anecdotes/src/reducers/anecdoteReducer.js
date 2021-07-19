@@ -39,7 +39,7 @@ const reducer = (state = [], action) => {
 
   switch (action.type) {
     case 'VOTE':
-      return state.map(anecdote => anecdote.id !== action.data.id ? anecdote : action.data.content);
+      return state.map(anecdote => anecdote.id !== action.data.id ? anecdote : action.data);
     case 'NEW':
       return [...state, action.data];
     case 'INIT':

@@ -15,7 +15,7 @@ const AnecdoteForm = () => {
     const anecdote = dispatch(addAnecdote(content));
     console.log('anecdote', anecdote);
 
-    showNotification(dispatch, 'New anecdote added');
+    dispatch(showNotification('New anecdote added', 2));
   }
 
   return (
