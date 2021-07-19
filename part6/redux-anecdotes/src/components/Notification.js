@@ -19,8 +19,7 @@ const Notification = (props) => {
 }
 const mapStateToProps = (state) => {
   return {
-    // Take the first (newest) note only
-    notification: state.notification[0],
+    notification: state.notification,
   }
 }
 

@@ -13,7 +13,7 @@ const AnecdoteList = () => {
   const vote = async (id) => {
     const vote = dispatch(addVote(id));
     console.log('vote', vote);
-    dispatch(showNotification('Anecdote voted', 2));
+    dispatch(showNotification('Anecdote voted', 5));
   }
 
   const sortByVotes = (objs) => [...objs].sort((a,b) => (a.votes > b.votes) ? -1 : a.votes < b.votes ? 1 : 0);

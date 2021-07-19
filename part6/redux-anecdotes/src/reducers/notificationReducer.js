@@ -1,4 +1,4 @@
-const notificationAtStart = [];
+const notificationAtStart = '';
     
 const initialState = notificationAtStart;
   
@@ -27,7 +27,8 @@ export const showNotification = (text, timeout) => {
     return async dispatch => {
       const nextId = runningId++;
       dispatch(addNotification(text, nextId));
-      setTimeout(() => dispatch(clearNotification(nextId)), timeout * 1000);
+      const timeoutId = setTimeout(() => dispatch(clearNotification(nextId)), timeout * 1000);
+      console.log('timeoutId', timeoutId);
     }
 }
 
@@ -38,9 +39,9 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'NEW_NOTE':
       // Newest on top, it is shown
-      return [action.data, ...state];
+      return action.data;
     case 'CLEAR_NOTE':
-      return state.filter((e)=>e.id !== action.data.id);
+      return ''
     default:
       return state;
   }

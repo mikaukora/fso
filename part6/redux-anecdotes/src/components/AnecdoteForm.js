@@ -13,7 +13,7 @@ const AnecdoteForm = (props) => {
     const anecdote = props.addAnecdote(content);
     console.log('anecdote', anecdote);
 
-    props.showNotification('New anecdote added', 2);
+    props.showNotification('New anecdote added', 5);
   }
 
   return (
