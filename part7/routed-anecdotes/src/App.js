@@ -78,10 +78,16 @@ const CreateNew = (props) => {
     history.push('/')
   }
 
+  const resetFields = () => {
+    contentField.reset()
+    authorField.reset()
+    infoField.reset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
+      <form>
         <div>
           content
           <input {...contentField} />
@@ -94,7 +100,8 @@ const CreateNew = (props) => {
           url for more info
           <input {...infoField} />
         </div>
-        <button>create</button>
+        <button type="submit" onClick={handleSubmit}>create</button>
+        <button type="reset" onClick={resetFields}>reset</button>
       </form>
     </div>
   )
