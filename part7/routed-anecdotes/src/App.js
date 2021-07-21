@@ -84,21 +84,23 @@ const CreateNew = (props) => {
     infoField.reset()
   }
 
+  const skipReset = ({reset, ...rest}) => rest
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form>
         <div>
           content
-          <input {...contentField} />
+          <input {...skipReset(contentField)} />
         </div>
         <div>
           author
-          <input {...authorField} />
+          <input {...skipReset(authorField)} />
         </div>
         <div>
           url for more info
-          <input {...infoField} />
+          <input {...skipReset(infoField)} />
         </div>
         <button type="submit" onClick={handleSubmit}>create</button>
         <button type="reset" onClick={resetFields}>reset</button>
