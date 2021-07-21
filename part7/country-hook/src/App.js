@@ -19,11 +19,17 @@ const useCountry = (name) => {
   const [country, setCountry] = useState(null)
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`https://restcountries.eu/rest/v2/name/${name}?fullText=true`)
+        setCountry({found: true, data: response.data[0]})
+      } catch {
+        setCountry({found: false})
+      }
+    }
+
     if (name) {
-      axios
-        .get(`https://restcountries.eu/rest/v2/name/${name}?fullText=true`)
-        .then((response) => setCountry({found: true, data: response.data[0]}))
-        .catch(() => setCountry({found: false}))
+      fetchData()
     }
   }, [name])
 
