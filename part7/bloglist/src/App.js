@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Blog from './components/Blog';
 import CreateForm from './components/CreateForm';
 import Notification from './components/Notification';
@@ -7,26 +7,19 @@ import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import { showNotification } from './reducers/notificationReducer';
+import { initializeBlogs, addBlog } from './reducers/blogReducer';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+
   const dispatch = useDispatch();
-
-  const sortByLikes = (objs) => [...objs].sort((a,b) => (a.likes > b.likes) ? -1 : a.likes < b.likes ? 1 : 0);
-
-  const sortAndUpdateBlogs = (blogs) => {
-    const sorted = sortByLikes(blogs);
-    setBlogs(sorted);
-  };
+  const blogs = useSelector(state => state.blogs);
 
   useEffect(() => {
-    blogService.getAll().then(blogs => {
-      sortAndUpdateBlogs(blogs);
-    });
-  }, []);
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedUser');
@@ -92,15 +85,13 @@ const App = () => {
     </div>
   );
 
-  const addBlog = async (blog) => {
+  const addABlog = async (blog) => {
     try {
       blogListRef.current.toggleVisibility();
-      await blogService.create(blog);
-      const updatedBlogs = await blogService.getAll();
-      sortAndUpdateBlogs( updatedBlogs );
+      dispatch(addBlog(blog));
       dispatch(showNotification(`a new blog ${blog.title} by ${blog.author} added`));
     } catch (exception) {
-      console.log('error when creating blog');
+      dispatch(showNotification('error when creating blog', true));
     }
   };
 
@@ -110,7 +101,8 @@ const App = () => {
     console.log(blog);
     await blogService.update(blog);
     const updatedBlogs = await blogService.getAll();
-    sortAndUpdateBlogs(updatedBlogs);
+    console.log('TODO', updatedBlogs);
+    //setBlogs(updatedBlogs);
     dispatch(showNotification(`blog ${blog.title} by ${blog.author} updated, now ${blog.likes} likes `));
   };
 
@@ -118,9 +110,14 @@ const App = () => {
     console.log('removing blog', blog);
     await blogService.remove(blog);
     const updatedBlogs = await blogService.getAll();
-    sortAndUpdateBlogs(updatedBlogs);
+    console.log('TODO', updatedBlogs);
+    //setBlogs(updatedBlogs);
     dispatch(showNotification(`blog ${blog.title} by ${blog.author} removed`));
   };
+
+  const sortByLikes = (objs) => [...objs].sort((a,b) => (a.likes > b.likes) ? -1 : a.likes < b.likes ? 1 : 0);
+
+  const sortedList = (l) => sortByLikes(l);
 
   const blogList = () => (
     <div>
@@ -128,11 +125,11 @@ const App = () => {
       <p>{user.name} logged in <button onClick={handleLogout}>Log out</button></p>
       <Togglable buttonLabel='create new blog' ref={blogListRef}>
         <CreateForm
-          createBlog={addBlog}
+          createBlog={addABlog}
         ></CreateForm>
       </Togglable>
       <div>
-        {blogs.map(blog =>
+        {sortedList(blogs).map(blog =>
           <Blog key={blog.id} blog={blog} onLike={handleLikeUpdate} currentUser={user.username} onRemove={handleBlogRemove}/>
         )}
       </div>
