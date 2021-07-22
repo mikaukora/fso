@@ -10,20 +10,47 @@ const useField = (type) => {
     setValue(event.target.value)
   }
 
+  const reset = (event) => {
+    setValue('')
+  }
+
   return {
     type,
     value,
-    onChange
+    onChange,
+    reset
   }
 }
 
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const response = await axios.get(baseUrl)
+        setResources(response.data)
+      } catch(error) {
+        console.log(error)
+      }
+    }
+    getData()
+  }, [baseUrl])
 
   const create = (resource) => {
-    // ...
+    console.log('at create', resource);
+    console.log('using baseURL', baseUrl)
+
+    const sendData = async () => {
+      try {
+        const response = await axios.post(baseUrl, resource)
+        console.log(response.data)
+        setResources([...resources, response.data])
+      } catch (error) {
+        console.log('error:', error)
+      }
+    }
+    sendData()
   }
 
   const service = {
@@ -46,11 +73,14 @@ const App = () => {
   const handleNoteSubmit = (event) => {
     event.preventDefault()
     noteService.create({ content: content.value })
+    content.reset()
   }
  
   const handlePersonSubmit = (event) => {
     event.preventDefault()
     personService.create({ name: name.value, number: number.value})
+    name.reset()
+    number.reset()
   }
 
   return (
