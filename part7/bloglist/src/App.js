@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import Blog from './components/Blog';
 import CreateForm from './components/CreateForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
+import { showNotification } from './reducers/notificationReducer';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [notification, setNotification] = useState({});
+  const dispatch = useDispatch();
 
   const sortByLikes = (objs) => [...objs].sort((a,b) => (a.likes > b.likes) ? -1 : a.likes < b.likes ? 1 : 0);
 
@@ -52,7 +54,7 @@ const App = () => {
       setUsername('');
       setPassword('');
     } catch (exception) {
-      showNotification('wrong username or password', true);
+      dispatch(showNotification('wrong username or password', true));
     }
   };
 
@@ -96,17 +98,10 @@ const App = () => {
       await blogService.create(blog);
       const updatedBlogs = await blogService.getAll();
       sortAndUpdateBlogs( updatedBlogs );
-      showNotification(`a new blog ${blog.title} by ${blog.author} added`);
+      dispatch(showNotification(`a new blog ${blog.title} by ${blog.author} added`));
     } catch (exception) {
       console.log('error when creating blog');
     }
-  };
-
-  const showNotification = (msg, error = false) => {
-    setNotification({ message: msg, error: error });
-    setTimeout(() => {
-      setNotification({});
-    }, 5000);
   };
 
   const blogListRef = useRef();
@@ -116,7 +111,7 @@ const App = () => {
     await blogService.update(blog);
     const updatedBlogs = await blogService.getAll();
     sortAndUpdateBlogs(updatedBlogs);
-    showNotification(`blog ${blog.title} by ${blog.author} updated, now ${blog.likes} likes `);
+    dispatch(showNotification(`blog ${blog.title} by ${blog.author} updated, now ${blog.likes} likes `));
   };
 
   const handleBlogRemove = async (blog) => {
@@ -124,7 +119,7 @@ const App = () => {
     await blogService.remove(blog);
     const updatedBlogs = await blogService.getAll();
     sortAndUpdateBlogs(updatedBlogs);
-    showNotification(`blog ${blog.title} by ${blog.author} removed`);
+    dispatch(showNotification(`blog ${blog.title} by ${blog.author} removed`));
   };
 
   const blogList = () => (
@@ -146,7 +141,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={notification} />
+      <Notification />
       {user === null ? loginForm() : blogList()}
     </div>
   );
