@@ -14,11 +14,6 @@ const Blog = ({ blog, onLike, currentUser, onRemove }) => {
 
   const toggleDetails = () => setShowDetails(!showDetails);
 
-  const handleLike = (blog) => {
-    const updatedBlog = { ...blog, likes: blog.likes + 1 };
-    onLike(updatedBlog);
-  };
-
   const handleRemove = (blog) => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
       onRemove(blog);
@@ -38,7 +33,7 @@ const Blog = ({ blog, onLike, currentUser, onRemove }) => {
     <div style={blogStyle}>
       {blog.title} by {blog.author} <button onClick={toggleDetails}>hide</button>
       <p>{blog.url}</p>
-      <p> likes: {blog.likes} <button id='like-button' onClick={() => handleLike(blog)}>like</button></p>
+      <p> likes: {blog.likes} <button id='like-button' onClick={() => onLike(blog)}>like</button></p>
       <p> {blog?.user?.name}</p>
       {deleteButton(blog)}
     </div>

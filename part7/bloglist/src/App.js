@@ -7,7 +7,7 @@ import Togglable from './components/Togglable';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import { showNotification } from './reducers/notificationReducer';
-import { initializeBlogs, addBlog } from './reducers/blogReducer';
+import { initializeBlogs, addBlog, addLike, deleteBlog } from './reducers/blogReducer';
 
 const App = () => {
   const [username, setUsername] = useState('');
@@ -98,20 +98,12 @@ const App = () => {
   const blogListRef = useRef();
 
   const handleLikeUpdate = async (blog) => {
-    console.log(blog);
-    await blogService.update(blog);
-    const updatedBlogs = await blogService.getAll();
-    console.log('TODO', updatedBlogs);
-    //setBlogs(updatedBlogs);
-    dispatch(showNotification(`blog ${blog.title} by ${blog.author} updated, now ${blog.likes} likes `));
+    dispatch(addLike(blog));
+    dispatch(showNotification(`blog ${blog.title} by ${blog.author} updated`));
   };
 
   const handleBlogRemove = async (blog) => {
-    console.log('removing blog', blog);
-    await blogService.remove(blog);
-    const updatedBlogs = await blogService.getAll();
-    console.log('TODO', updatedBlogs);
-    //setBlogs(updatedBlogs);
+    dispatch(deleteBlog(blog));
     dispatch(showNotification(`blog ${blog.title} by ${blog.author} removed`));
   };
 
