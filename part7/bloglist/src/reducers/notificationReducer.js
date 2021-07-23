@@ -36,7 +36,6 @@ const reducer = (state = initialState, action) => {
 
   switch (action.type) {
   case 'NEW_NOTE':
-    // Newest on top, it is shown
     return action.data;
   case 'CLEAR_NOTE':
     return '';
