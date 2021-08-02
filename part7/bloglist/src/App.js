@@ -1,10 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  BrowserRouter as Router,
+  Switch, Route
+} from 'react-router-dom';
 import Blog from './components/Blog';
 import CreateForm from './components/CreateForm';
 import Notification from './components/Notification';
 import LoginForm from './components/LoginForm';
 import Togglable from './components/Togglable';
+import Users from './components/Users';
 import { showNotification } from './reducers/notificationReducer';
 import { initializeBlogs, addBlog, addLike, deleteBlog } from './reducers/blogReducer';
 import { login, logout, loggedInUser } from './reducers/loginReducer';
@@ -63,10 +68,15 @@ const App = () => {
 
   const sortedList = (l) => sortByLikes(l);
 
-  const blogList = () => (
+  const LoginInfo = ({ user }) => (
     <div>
       <h2>blogs</h2>
-      <p>{user.name} logged in <button onClick={handleLogout}>Log out</button></p>
+      <p>{user?.name} logged in <button onClick={handleLogout}>Log out</button></p>
+    </div>
+  );
+
+  const blogList = () => (
+    <div>
       <Togglable buttonLabel='create new blog' ref={blogListRef}>
         <CreateForm
           createBlog={addABlog}
@@ -81,10 +91,21 @@ const App = () => {
   );
 
   return (
-    <div>
-      <Notification />
-      {user === null ? <LoginForm onLogin={handleLogin}></LoginForm> : blogList()}
-    </div>
+    <Router>
+      <LoginInfo user={user}></LoginInfo>
+      <Switch>
+        <Route path='/users'>
+          <Users blogs={blogs}></Users>
+        </Route>
+        <Route path='/'>
+          <div>
+            <Notification />
+            {user === null ? <LoginForm onLogin={handleLogin}></LoginForm> : blogList()}
+          </div>
+        </Route>
+
+      </Switch>
+    </Router>
   );
 };
 
